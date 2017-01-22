@@ -1,0 +1,42 @@
+---
+title: "TOP 10 MOST POPULOUS CITIES"
+author: "James Ottavi"
+date: "1/21/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(ggmap)
+require(leaflet)
+```
+
+# Size and Location
+
+This analysis looks at two items:
+1. Where are the largest cities in the world?
+2. What is there approximate size?
+
+This analysis takes the data from the below link. Map was created in combination with the leaflet and ggmap packages of R
+<http://www.worldatlas.com/citypops.htm>.
+
+## Step 1: Get Data
+The data taken from the above link was loaded into a data frame called *df*.
+```{r init, message=FALSE}
+cities <- c("TOKYO", "JAKARTA", "DELHI", "MANILA", "SEOUL", "SHANGHAI", "KARACHI",
+            "BEIJING", "NEW YORK CITY", "GUANGZHAO")
+colors <- c(rep("RED", 8), "BLUE", "RED")
+pop <- c(37.8, 30.5, 25.0, 24.1, 23.5, 23.4, 22.1, 21.0, 20.6, 20.6) * 1000000
+df <- data.frame(city = cities, color = colors, population = pop, 
+                 geocode(cities))
+```
+
+## Step 2: Create Interactive Map
+The above data is recreated in a world map using the leaflet and ggmap packages.
+
+```{r map, echo=FALSE, message=FALSE}
+map <- df %>% leaflet() %>% addTiles %>% 
+  addCircles(radius = (df$population)/25, weight = .5, color = df$color, 
+             popup= paste0(df$city, " (",df$population, ")"))
+map
+```
